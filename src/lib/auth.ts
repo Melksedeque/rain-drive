@@ -12,7 +12,7 @@ const loginSchema = z.object({
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
-  secret: process.env.AUTH_SECRET, // Garantia explícita, embora Auth.js deva ler auto
+  secret: process.env.AUTH_SECRET,
   providers: [
     Credentials({
       credentials: {
