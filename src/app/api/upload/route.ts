@@ -23,14 +23,19 @@ export async function POST(request: Request): Promise<NextResponse> {
             'application/pdf',
             'text/plain',
             'video/mp4',
-            // Office Documents
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
-            'application/vnd.ms-excel', // xls
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
-            'application/msword', // doc
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation', // pptx
-            'application/vnd.ms-powerpoint', // ppt
-            'text/csv' // csv
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/vnd.ms-powerpoint',
+            'text/csv',
+            'application/zip',
+            'application/x-zip-compressed',
+            'application/x-rar-compressed',
+            'application/x-7z-compressed',
+            'application/x-tar',
+            'application/gzip'
           ],
           tokenPayload: JSON.stringify({
             email: session.user.email,
