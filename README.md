@@ -143,6 +143,9 @@ Bem-vindo ao RainDrive.
 ├─ public/
 └─ README.md
 ```
+
+---
+
 ## 🚀 Rodando localmente
 
 ```bash
@@ -160,6 +163,8 @@ NEXTAUTH_URL=http://localhost:3000
 BLOB_READ_WRITE_TOKEN=...
 ```
 
+---
+
 ## 🌍 Deploy
 
 - Frontend + Backend: Vercel
@@ -167,6 +172,8 @@ BLOB_READ_WRITE_TOKEN=...
 - Storage: Vercel Blob
 
 Totalmente compatível com ambiente serverless.
+
+---
 
 ## ⚠️ Aviso legal (moral)
 
@@ -176,6 +183,8 @@ RainDrive não é responsável por:
 - conflitos familiares envolvendo clima e downloads
 - ataques de ódio a meteorologia
 
+---
+
 ## 🏁 Conclusão
 
 RainDrive é:
@@ -184,4 +193,4 @@ RainDrive é:
 - Uma piada bem executada
 - Um lembrete de que **regras idiotas também podem ser bem implementadas**
 
-#### ☔ Sem chuva, sem download.
+### ☔ Sem chuva, sem download.
