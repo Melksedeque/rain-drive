@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted-fg: var(--muted-fg);
+  --color-card: var(--card);
+  --color-card-fg: var(--card-fg);
+  --color-border: var(--border);
+  --color-shadow: var(--shadow);
+  
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-focus: var(--focus);
+  --color-ring: var(--ring);
+  
+  --color-weather-cloudy: var(--weather-cloudy);
+  --color-weather-dry: var(--weather-dry);
+  --color-weather-raining: var(--weather-raining);
+  
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0 }
+    to { height: var(--radix-accordion-content-height) }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height) }
+    to { height: 0 }
+  }
+}
+
+/* Base variables */
+:root {
+  /* Default to Light theme values if no class is present (or fallback) */
+  --bg: #f8fafc; /* slate-50 */
+  --fg: #0f172a; /* slate-900 */
+  --muted-fg: #64748b; /* slate-500 */
+  --card: #ffffff;
+  --card-fg: #0f172a;
+  --border: #e2e8f0; /* slate-200 */
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  
+  --accent: #4f46e5; /* indigo-600 */
+  --accent-fg: #ffffff;
+  --focus: #6366f1; /* indigo-500 */
+  --ring: #818cf8; /* indigo-400 */
+  
+  --weather-cloudy: #94a3b8; /* slate-400 */
+  --weather-dry: #d97706; /* amber-600 */
+  --weather-raining: #3b82f6; /* blue-500 */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Explicit Light Theme */
+.theme-light {
+  --bg: #f8fafc;
+  --fg: #0f172a;
+  --muted-fg: #64748b;
+  --card: #ffffff;
+  --card-fg: #0f172a;
+  --border: #e2e8f0;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  
+  --accent: #4f46e5;
+  --accent-fg: #ffffff;
+  --focus: #6366f1;
+  --ring: #818cf8;
+  
+  --weather-cloudy: #94a3b8;
+  --weather-dry: #d97706;
+  --weather-raining: #3b82f6;
+}
+
+/* Cloud Noir (Dark) Theme */
+.theme-noir {
+  --bg: #020617; /* slate-950 */
+  --fg: #f8fafc; /* slate-50 */
+  --muted-fg: #94a3b8; /* slate-400 */
+  --card: #0f172a; /* slate-900 */
+  --card-fg: #f8fafc;
+  --border: #1e293b; /* slate-800 */
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+  
+  --accent: #6366f1; /* indigo-500 */
+  --accent-fg: #ffffff;
+  --focus: #818cf8; /* indigo-400 */
+  --ring: #4f46e5; /* indigo-600 */
+  
+  --weather-cloudy: #64748b; /* slate-500 */
+  --weather-dry: #b45309; /* amber-700 */
+  --weather-raining: #3b82f6; /* blue-500 */
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility to hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
