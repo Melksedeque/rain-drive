@@ -100,7 +100,7 @@ function WeatherWidgetDemo() {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="relative w-full max-w-sm bg-card border border-border rounded-2xl shadow-xl overflow-hidden p-6"
     >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-20" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-accent to-transparent opacity-20" />
       
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">

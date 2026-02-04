@@ -1,7 +1,7 @@
 "use client"
 
 import { FolderCard } from "@/components/drive/folder-card"
-import { FileIcon, ChevronRight, Home, UploadCloud } from "lucide-react"
+import { FileIcon, ChevronRight, Home, UploadCloud, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useCallback } from "react"

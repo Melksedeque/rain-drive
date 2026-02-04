@@ -19,8 +19,6 @@ export function UploadButton() {
 
     setIsUploading(true)
 
-    // Extract folderId from pathname: /drive/[folderId]
-    // if pathname is /drive, folderId is null
     const folderId = pathname.startsWith('/drive/') && pathname.length > 7 
       ? pathname.split('/drive/')[1] 
       : null

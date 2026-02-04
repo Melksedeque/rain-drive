@@ -91,13 +91,13 @@ export async function moveItem(itemId: string, itemType: "file" | "folder", targ
        while (currentId) {
          if (currentId === itemId) throw new Error("Não é possível mover uma pasta para dentro dela mesma")
          
-         const parent = await prisma.folder.findUnique({
+         const parentFolder: { parentId: string | null } | null = await prisma.folder.findUnique({
             where: { id: currentId },
             select: { parentId: true }
          })
-         
-         if (!parent) break 
-         currentId = parent.parentId
+        
+        if (!parentFolder) break 
+        currentId = parentFolder.parentId
        }
     }
 
