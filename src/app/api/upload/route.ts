@@ -22,7 +22,15 @@ export async function POST(request: Request): Promise<NextResponse> {
             'image/gif',
             'application/pdf',
             'text/plain',
-            'video/mp4'
+            'video/mp4',
+            // Office Documents
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
+            'application/vnd.ms-excel', // xls
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
+            'application/msword', // doc
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation', // pptx
+            'application/vnd.ms-powerpoint', // ppt
+            'text/csv' // csv
           ],
           tokenPayload: JSON.stringify({
             email: session.user.email,
