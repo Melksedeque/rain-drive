@@ -8,8 +8,6 @@ const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({ 
   connectionString,
-  // Neon (e maioria dos DBs cloud) exige SSL. 
-  // O driver @prisma/adapter-pg precisa dessa config explícita no Pool para serverless.
   ssl: true 
 });
 const adapter = new PrismaPg(pool);
