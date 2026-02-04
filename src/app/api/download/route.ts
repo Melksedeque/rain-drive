@@ -11,23 +11,23 @@ export async function GET(request: Request) {
     return new NextResponse("File ID required", { status: 400 })
   }
 
-  // 1. Auth check
+  // 1. Verificação de Auth
   const session = await auth()
   if (!session?.user?.email) {
-    return new NextResponse("Unauthorized", { status: 401 })
+    return new NextResponse("Não autorizado", { status: 401 })
   }
 
-  // 2. Ownership check
+  // 2. Verificação de Propriedade
   const file = await prisma.file.findUnique({
     where: { id: fileId },
     include: { user: true }
   })
 
   if (!file || file.user.email !== session.user.email) {
-    return new NextResponse("File not found or access denied", { status: 404 })
+    return new NextResponse("Arquivo não encontrado ou acesso negado", { status: 404 })
   }
 
-  // 3. Weather check
+  // 3. Verificação do Clima (Weather Gate)
   const lat = searchParams.get("lat") ? Number(searchParams.get("lat")) : undefined
   const lon = searchParams.get("lon") ? Number(searchParams.get("lon")) : undefined
   
@@ -37,6 +37,6 @@ export async function GET(request: Request) {
     return new NextResponse("O tempo está seco. A nuvem evaporou. Volte quando chover.", { status: 403 })
   }
 
-  // 4. Redirect to storage
+  // 4. Redirecionar para o storage
   return NextResponse.redirect(file.storageUrl)
 }

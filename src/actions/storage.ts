@@ -25,7 +25,7 @@ export async function createFile(data: {
       name: data.name,
       sizeBytes: BigInt(data.size),
       storageUrl: data.url,
-      storageKey: data.url, // Using URL as key for now, or extract from URL if needed
+      storageKey: data.url, // TODO: Usar URL como chave por enquanto, ou extrair da URL se necessário (ver PENDING.md)
       mimeType: data.mimeType,
       folderId: data.folderId || null,
       userId: user.id,
@@ -66,12 +66,12 @@ export async function moveItem(itemId: string, itemType: "file" | "folder", targ
 
   if (!user) throw new Error("User not found")
 
-  // Basic ownership check is implicit by where clause with userId (if we added it, but let's check explicitly)
-  // Or better: ensure the item belongs to user before update.
+  // Verificação básica de propriedade é implícita pela cláusula where com userId
+  // Mas vamos verificar explicitamente para garantir
   
   if (itemType === "file") {
     const file = await prisma.file.findFirst({ where: { id: itemId, userId: user.id }})
-    if (!file) throw new Error("File not found")
+    if (!file) throw new Error("Arquivo não encontrado")
     
     await prisma.file.update({
       where: { id: itemId },
@@ -79,13 +79,13 @@ export async function moveItem(itemId: string, itemType: "file" | "folder", targ
     })
   } else {
     const folder = await prisma.folder.findFirst({ where: { id: itemId, userId: user.id }})
-    if (!folder) throw new Error("Folder not found")
+    if (!folder) throw new Error("Pasta não encontrada")
 
-    // Prevent moving folder into itself or its children (Circular dependency)
-    // This requires a recursive check. For MVP, just check if targetFolderId === itemId
-    if (targetFolderId === itemId) throw new Error("Cannot move folder into itself")
+    // Prevenir mover pasta para dentro dela mesma ou de seus filhos (Dependência Circular)
+    // Isso requer uma verificação recursiva. Para o MVP, checamos apenas se o destino é o próprio item.
+    if (targetFolderId === itemId) throw new Error("Não é possível mover uma pasta para dentro dela mesma")
     
-    // Proper circular check:
+    // Verificação circular adequada:
     if (targetFolderId) {
        let currentId: string | null = targetFolderId
        while (currentId) {

@@ -9,7 +9,7 @@ import { toast } from "sonner"
 interface UseFileUploadOptions {
   folderId?: string | null
   onSuccess?: () => void
-  onError?: (error: any) => void
+  onError?: (error: Error) => void
 }
 
 export function useFileUpload({ folderId, onSuccess, onError }: UseFileUploadOptions = {}) {
@@ -38,7 +38,8 @@ export function useFileUpload({ folderId, onSuccess, onError }: UseFileUploadOpt
       onSuccess?.()
     } catch (error) {
       console.error("Upload error:", error)
-      onError?.(error)
+      const err = error instanceof Error ? error : new Error("Unknown upload error")
+      onError?.(err)
       toast.error("Erro ao fazer upload. Tente novamente.")
     } finally {
       setIsUploading(false)

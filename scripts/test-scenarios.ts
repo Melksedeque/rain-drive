@@ -59,7 +59,7 @@ async function main() {
       data: { email: emailA, passwordHash: "whatever" }
     })
     console.error("❌ Falha: Permitiu email duplicado")
-  } catch (e) {
+  } catch {
     console.log("✅ Sucesso: Bloqueou email duplicado")
   }
 

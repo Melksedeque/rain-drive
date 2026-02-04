@@ -9,7 +9,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
+      onBeforeGenerateToken: async () => {
         const session = await auth();
         if (!session?.user?.email) {
           throw new Error('Unauthorized');
@@ -29,9 +29,10 @@ export async function POST(request: Request): Promise<NextResponse> {
           }),
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Webhook handler - useful for production consistency
-        // But we will also handle DB creation on client-side success for immediate UI feedback
+      onUploadCompleted: async ({ blob }) => {
+        // Webhook handler - útil para consistência em produção
+        // Mas lidaremos com a criação no DB no lado do cliente (sucesso) para feedback imediato na UI
+        // TODO: Implementar webhook para robustez (ver PENDING.md)
         console.log('Blob uploaded', blob.url);
       },
     });

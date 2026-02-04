@@ -30,6 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             const passwordsMatch = await bcrypt.compare(password, user.passwordHash)
             if (passwordsMatch) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { passwordHash, ...userWithoutPassword } = user
                 return userWithoutPassword
             }

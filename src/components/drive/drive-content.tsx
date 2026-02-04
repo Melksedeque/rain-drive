@@ -12,9 +12,11 @@ import { ItemActions } from "./item-actions"
 import { useWeather } from "@/components/providers/weather-provider"
 import { toast } from "sonner"
 
+import { Folder, File } from "@prisma/client"
+
 interface DriveContentProps {
-  folders: any[]
-  files: any[]
+  folders: Folder[]
+  files: File[]
   breadcrumbs?: { label: string; href: string }[]
   currentFolderId?: string | null
 }
@@ -24,7 +26,7 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
   const [isDragging, setIsDragging] = useState(false)
   const [draggedItem, setDraggedItem] = useState<{ id: string; type: "file" | "folder" } | null>(null)
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null)
-  const { uploadFile, isUploading } = useFileUpload({ folderId: currentFolderId })
+  const { uploadFile } = useFileUpload({ folderId: currentFolderId })
   const { status: weatherStatus } = useWeather()
 
   const handleDragOver = useCallback((e: React.DragEvent) => {

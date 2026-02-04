@@ -1,11 +1,20 @@
 "use client"
 
-import { Cloud, CloudRain, Sun, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { CloudRain, Cloud, Sun, Loader2 } from "lucide-react"
 import { useWeather } from "@/components/providers/weather-provider"
+import { cn } from "@/lib/utils"
 
-export function WeatherWidget() {
+export function WeatherWidget({ className }: { className?: string }) {
   const { status, loading } = useWeather()
+
+  if (loading) {
+    return (
+      <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-medium animate-pulse", className)}>
+        <Loader2 className="w-4 h-4 animate-spin" />
+        <span>Verificando clima...</span>
+      </div>
+    )
+  }
 
   return (
     <div className={cn(

@@ -2,7 +2,7 @@
 
 import { upload } from "@vercel/blob/client"
 import { useState, useRef } from "react"
-import { Loader2, Upload, Plus } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import { createFile } from "@/actions/storage"
 import { useRouter, usePathname } from "next/navigation"
 

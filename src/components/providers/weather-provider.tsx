@@ -25,7 +25,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
                 })
                 lat = position.coords.latitude
                 lon = position.coords.longitude
-            } catch (e) {
+            } catch {
                 // ignore
             }
         }

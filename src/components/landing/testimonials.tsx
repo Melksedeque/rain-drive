@@ -68,7 +68,7 @@ export function Testimonials() {
               className="p-6 rounded-2xl bg-card border border-border relative"
             >
               <Quote className="absolute top-6 right-6 w-8 h-8 text-accent/10" />
-              <p className="text-lg mb-6 leading-relaxed relative z-10">"{t.text}"</p>
+              <p className="text-lg mb-6 leading-relaxed relative z-10">&quot;{t.text}&quot;</p>
               <div>
                 <div className="font-semibold">{t.author}</div>
                 <div className="text-sm text-muted-fg">{t.role}</div>

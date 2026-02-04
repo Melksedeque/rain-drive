@@ -10,17 +10,17 @@ interface WeatherResponse {
 // Códigos WMO de chuva/garoa/tempestade
 // https://open-meteo.com/en/docs
 const RAIN_CODES = [
-  51, 53, 55, // Drizzle
-  56, 57, // Freezing Drizzle
-  61, 63, 65, // Rain
-  66, 67, // Freezing Rain
-  80, 81, 82, // Rain showers
-  95, 96, 99, // Thunderstorm
+  51, 53, 55, // Chuvisco
+  56, 57, // Chuvisco congelante
+  61, 63, 65, // Chuva
+  66, 67, // Chuva congelante
+  80, 81, 82, // Pancadas de chuva
+  95, 96, 99, // Tempestade
 ]
 
-// Cache simples em memória (global variable)
+// Cache simples em memória (variável global)
 // Em produção serverless, isso pode resetar, mas ok para MVP.
-// O ideal seria KV ou Redis, mas vamos manter simples conforme specs.
+// TODO: Migrar para KV ou Redis (ver PENDING.md)
 let weatherCache: {
   state: WeatherState
   timestamp: number
@@ -34,13 +34,12 @@ export async function checkWeather(lat?: number, lon?: number): Promise<WeatherS
   // 1. Verificar cache
   const now = Date.now()
   if (weatherCache && (now - weatherCache.timestamp < CACHE_TTL_MS)) {
-    // Se tiver geo específica, verificar se é "perto" o suficiente ou ignorar e usar cache global
-    // Para MVP, vamos simplificar: se tem cache válido, usa ele.
+    // Se tiver cache válido, usa ele para economizar chamadas
     return weatherCache.state
   }
 
   try {
-    // 2. Definir coordenadas (Default: São Paulo/SP - Onde sempre chove quando não deve)
+    // 2. Definir coordenadas (Padrão: São Paulo/SP)
     const targetLat = lat ?? -23.5505
     const targetLon = lon ?? -46.6333
 
@@ -51,7 +50,7 @@ export async function checkWeather(lat?: number, lon?: number): Promise<WeatherS
     )
 
     if (!response.ok) {
-      throw new Error("Weather API error")
+      throw new Error("Erro na API de Clima")
     }
 
     const data: WeatherResponse = await response.json()
@@ -74,9 +73,8 @@ export async function checkWeather(lat?: number, lon?: number): Promise<WeatherS
     return newState
 
   } catch (error) {
-    console.error("Weather check failed:", error)
-    // Fallback: Modo anti-felicidade (assumir DRY para não bloquear sem saber, 
-    // OU assumir erro e bloquear? Docs diz: "assumir DRY (sem chuva) - modo anti-felicidade")
+    console.error("Falha na verificação do clima:", error)
+    // Fallback: Assume "DRY" (sem chuva) em caso de erro para segurança
     return "DRY"
   }
 }
