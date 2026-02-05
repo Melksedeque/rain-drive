@@ -18,6 +18,7 @@ export function UploadButton() {
     if (!file) return
 
     setIsUploading(true)
+    console.log("Iniciando upload:", { name: file.name, type: file.type, size: file.size })
 
     const folderId = pathname.startsWith('/drive/') && pathname.length > 7 
       ? pathname.split('/drive/')[1] 
