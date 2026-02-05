@@ -11,8 +11,6 @@ export function Topbar({ userEmail }: { userEmail?: string | null }) {
   return (
     <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm px-6 flex items-center justify-between gap-4 sticky top-0 z-40">
       
-      {/* Mobile Logo could go here */}
-      
       {/* Search */}
       <div className="flex-1 max-w-xl">
         <SearchBar />
