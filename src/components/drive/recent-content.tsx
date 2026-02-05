@@ -1,9 +1,8 @@
 "use client"
 
-import { FileIcon, Clock, ArrowUpRight } from "lucide-react"
-import Link from "next/link"
+import { FileIcon, Clock } from "lucide-react"
 import { File } from "@prisma/client"
-import { cn } from "@/lib/utils"
+import { FileActionsMenu } from "./file-actions-menu"
 
 interface RecentFile extends File {
   folder: { name: string } | null
@@ -51,47 +50,42 @@ export function RecentContent({ files }: RecentContentProps) {
               </thead>
               <tbody className="divide-y divide-border">
                 {files.map((file) => (
-                  <tr 
-                    key={file.id} 
-                    className="group hover:bg-accent/5 transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
-                           <FileIcon className="w-4 h-4" />
+                  <FileActionsMenu key={file.id} file={file}>
+                    <tr 
+                      className="group hover:bg-accent/5 transition-colors cursor-default"
+                    >
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
+                             <FileIcon className="w-4 h-4" />
+                          </div>
+                          <span className="font-medium text-fg">
+                             {file.name}
+                          </span>
                         </div>
-                        <span className="font-medium text-fg">
-                           {file.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg">
-                      {file.folder ? (
-                        <span className="flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded-full w-fit">
-                          {file.folder.name}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-muted-fg/50 italic">Meu Drive</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg font-mono text-xs">
-                        {(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg text-xs">
-                        {new Date(file.updatedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3">
-                        <a 
-                           href={file.storageUrl}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           className="p-2 hover:bg-accent/10 rounded-full text-muted-fg hover:text-accent transition-colors flex"
-                           title="Abrir arquivo"
-                        >
-                            <ArrowUpRight className="w-4 h-4" />
-                        </a>
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg">
+                        {file.folder ? (
+                          <span className="flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded-full w-fit">
+                            {file.folder.name}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-fg/50 italic">Meu Drive</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg font-mono text-xs">
+                          {(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg text-xs">
+                          {new Date(file.updatedAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                          <div onClick={(e) => e.stopPropagation()} className="inline-block">
+                              <FileActionsMenu file={file} asDropdown />
+                          </div>
+                      </td>
+                    </tr>
+                  </FileActionsMenu>
                 ))}
               </tbody>
             </table>
