@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "RainDrive",
   description: "Cloud storage that only works when it rains.",
   icons: {
-    icon: "/icon", // Fallback if dynamic generation needs help, but Next.js usually handles this
+    icon: "/icon",
     apple: "/apple-icon",
   },
 };
