@@ -8,7 +8,7 @@ export function Logo({ className, onClick }: { className?: string; onClick?: (e:
       <div className={cn(
         "p-1.5 rounded-lg transition-colors duration-300",
         "bg-accent text-accent-fg",
-        "[.theme-noir_&]:bg-accent/10 [.theme-noir_&]:text-accent"
+        "in-[.theme-noir]:bg-accent/10 in-[.theme-noir]:text-accent"
       )}>
         <CloudRain className="w-5 h-5" />
       </div>
