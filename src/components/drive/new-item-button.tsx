@@ -83,7 +83,7 @@ export function NewItemButton() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.95 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="absolute right-0 top-full mt-2 w-48 p-1 bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden"
+              className="absolute right-0 top-full mt-2 w-50 p-1 bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden"
             >
               <button
                 onClick={openFolderDialog}
