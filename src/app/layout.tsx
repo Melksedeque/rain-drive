@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -13,9 +13,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#4f46e5",
+};
+
 export const metadata: Metadata = {
   title: "RainDrive",
   description: "Cloud storage that only works when it rains.",
+  icons: {
+    icon: "/icon", // Fallback if dynamic generation needs help, but Next.js usually handles this
+    apple: "/apple-icon",
+  },
 };
 
 export default function RootLayout({
