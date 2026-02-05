@@ -33,7 +33,7 @@ export default async function FolderPage({ params, searchParams }: { params: Pro
     include: { user: true }
   })
 
-  if (!currentFolder || currentFolder.user.email !== session.user.email) {
+  if (!currentFolder || currentFolder.user.email !== session.user.email || currentFolder.inTrash) {
     notFound()
   }
 
@@ -42,6 +42,7 @@ export default async function FolderPage({ params, searchParams }: { params: Pro
     prisma.folder.findMany({
       where: {
         userId: currentFolder.userId,
+        inTrash: false,
         ...(q 
             ? { name: { contains: q, mode: "insensitive" } } 
             : { parentId: folderId }
@@ -52,6 +53,7 @@ export default async function FolderPage({ params, searchParams }: { params: Pro
     prisma.file.findMany({
       where: {
         userId: currentFolder.userId,
+        inTrash: false,
         ...(q 
             ? { name: { contains: q, mode: "insensitive" } } 
             : { folderId: folderId }

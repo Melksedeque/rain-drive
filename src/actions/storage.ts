@@ -35,6 +35,155 @@ export async function createFile(data: {
   revalidatePath("/drive")
 }
 
+export async function deleteItem(itemId: string, itemType: "file" | "folder") {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  if (itemType === "file") {
+    await prisma.file.update({
+      where: { id: itemId, userId: user.id },
+      data: { inTrash: true, deletedAt: new Date() }
+    })
+  } else {
+    await prisma.folder.update({
+      where: { id: itemId, userId: user.id },
+      data: { inTrash: true, deletedAt: new Date() }
+    })
+  }
+
+  revalidatePath("/drive")
+}
+
+export async function restoreItem(itemId: string, itemType: "file" | "folder") {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  if (itemType === "file") {
+    await prisma.file.update({
+      where: { id: itemId, userId: user.id },
+      data: { inTrash: false, deletedAt: null }
+    })
+  } else {
+    await prisma.folder.update({
+      where: { id: itemId, userId: user.id },
+      data: { inTrash: false, deletedAt: null }
+    })
+  }
+
+  revalidatePath("/drive")
+  revalidatePath("/drive/trash")
+}
+
+export async function permanentDeleteItem(itemId: string, itemType: "file" | "folder") {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  // TODO: Se for arquivo, deletar do Vercel Blob também (ver PENDING.md)
+  // Por enquanto, deletamos apenas do banco e o Blob fica órfão (precisa de limpeza periódica ou deletar aqui)
+  
+  if (itemType === "file") {
+     // Tentativa de deletar do Blob seria ideal aqui se tivéssemos a URL
+     // const file = await prisma.file.findUnique({ where: { id: itemId }})
+     // if (file) await del(file.storageUrl) 
+
+    await prisma.file.delete({
+      where: { id: itemId, userId: user.id }
+    })
+  } else {
+    // Cascade cuida dos filhos
+    await prisma.folder.delete({
+      where: { id: itemId, userId: user.id }
+    })
+  }
+
+  revalidatePath("/drive/trash")
+}
+
+export async function emptyTrash() {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  // Deletar arquivos na lixeira
+  await prisma.file.deleteMany({
+    where: { userId: user.id, inTrash: true }
+  })
+
+  // Deletar pastas na lixeira
+  await prisma.folder.deleteMany({
+    where: { userId: user.id, inTrash: true }
+  })
+
+  revalidatePath("/drive/trash")
+}
+
+export async function getRecentFiles(limit: number = 20) {
+  const session = await auth()
+  if (!session?.user?.email) return []
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) return []
+
+  return prisma.file.findMany({
+    where: { 
+      userId: user.id, 
+      inTrash: false 
+    },
+    orderBy: { updatedAt: 'desc' },
+    take: limit,
+    include: { folder: { select: { name: true } } }
+  })
+}
+
+export async function getTrashItems() {
+  const session = await auth()
+  if (!session?.user?.email) return { files: [], folders: [] }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) return { files: [], folders: [] }
+
+  const folders = await prisma.folder.findMany({
+    where: { userId: user.id, inTrash: true },
+    orderBy: { deletedAt: 'desc' }
+  })
+
+  const files = await prisma.file.findMany({
+    where: { userId: user.id, inTrash: true },
+    orderBy: { deletedAt: 'desc' }
+  })
+
+  return { folders, files }
+}
+
 export async function getUserStorageUsage() {
   const session = await auth()
   if (!session?.user?.email) return 0

@@ -19,6 +19,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
   const folders = await prisma.folder.findMany({
     where: {
       userId: user.id,
+      inTrash: false,
       ...(q ? { name: { contains: q, mode: "insensitive" } } : { parentId: null })
     },
     orderBy: { name: "asc" }
@@ -27,6 +28,7 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
   const files = await prisma.file.findMany({
     where: {
       userId: user.id,
+      inTrash: false,
       ...(q ? { name: { contains: q, mode: "insensitive" } } : { folderId: null })
     },
     orderBy: { name: "asc" }
