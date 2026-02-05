@@ -22,6 +22,11 @@ export default async function DrivePage({ searchParams }: { searchParams: Promis
       inTrash: false,
       ...(q ? { name: { contains: q, mode: "insensitive" } } : { parentId: null })
     },
+    include: {
+      _count: {
+        select: { files: true, children: true }
+      }
+    },
     orderBy: { name: "asc" }
   })
 

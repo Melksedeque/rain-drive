@@ -48,6 +48,11 @@ export default async function FolderPage({ params, searchParams }: { params: Pro
             : { parentId: folderId }
         )
       },
+      include: {
+        _count: {
+          select: { files: true, children: true }
+        }
+      },
       orderBy: { name: 'asc' }
     }),
     prisma.file.findMany({

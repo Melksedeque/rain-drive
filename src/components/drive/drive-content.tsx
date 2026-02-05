@@ -14,8 +14,15 @@ import { toast } from "sonner"
 
 import { Folder, File } from "@prisma/client"
 
+interface FolderWithCount extends Folder {
+  _count?: {
+    files: number
+    children: number
+  }
+}
+
 interface DriveContentProps {
-  folders: Folder[]
+  folders: FolderWithCount[]
   files: File[]
   breadcrumbs?: { label: string; href: string }[]
   currentFolderId?: string | null
@@ -159,7 +166,7 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
               >
                 <FolderCard 
                   name={folder.name} 
-                  itemCount={0} // TODO: Count items
+                  itemCount={(folder._count?.files || 0) + (folder._count?.children || 0)}
                   status={weatherStatus}
                   menu={<ItemActions id={folder.id} type="folder" />}
                 />
