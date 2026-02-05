@@ -4,14 +4,19 @@ import { auth } from '@/lib/auth';
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
+  console.log("Upload API chamada. Body:", JSON.stringify(body));
 
   try {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async () => {
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        console.log("Gerando token para:", pathname);
         const session = await auth();
+        console.log("Sessão encontrada:", session?.user?.email);
+
         if (!session?.user?.email) {
+          console.error("Erro: Usuário não autenticado");
           throw new Error('Unauthorized');
         }
 
@@ -55,6 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error("Erro fatal no upload route:", error);
     return NextResponse.json(
       { error: (error as Error).message },
       { status: 400 },
