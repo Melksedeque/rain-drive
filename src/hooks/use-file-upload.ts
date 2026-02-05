@@ -17,12 +17,19 @@ export function useFileUpload({ folderId, onSuccess, onError }: UseFileUploadOpt
   const router = useRouter()
 
   const uploadFile = async (file: File) => {
+    // Client-side limit check (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("O arquivo excede o limite de 10MB.")
+      return
+    }
+
     setIsUploading(true)
 
     try {
       const newBlob = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
+        clientPayload: JSON.stringify({ size: file.size }),
       })
 
       await createFile({

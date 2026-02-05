@@ -11,8 +11,12 @@ const sidebarItems = [
   { icon: Trash2, label: "Lixeira", href: "/drive/trash" },
 ]
 
-export function Sidebar() {
+export function Sidebar({ usageBytes = 0 }: { usageBytes?: number }) {
   const pathname = usePathname()
+  const limitBytes = 1024 * 1024 * 1024; // 1GB
+  const percentage = Math.min((usageBytes / limitBytes) * 100, 100);
+  const usageFormatted = (usageBytes / (1024 * 1024)).toFixed(1); // MB
+  const limitFormatted = "1 GB";
 
   return (
     <aside className="w-64 border-r border-border bg-card/30 flex-col h-full hidden md:flex">
@@ -52,13 +56,16 @@ export function Sidebar() {
         <div className="bg-accent/5 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-fg">Armazenamento</span>
-            <span className="text-xs font-bold text-accent">75%</span>
+            <span className="text-xs font-bold text-accent">{Math.round(percentage)}%</span>
           </div>
           <div className="h-1.5 bg-border rounded-full overflow-hidden">
-            <div className="h-full bg-accent w-3/4 rounded-full" />
+            <div 
+              className="h-full bg-accent rounded-full transition-all duration-500" 
+              style={{ width: `${percentage}%` }}
+            />
           </div>
           <p className="text-[10px] text-muted-fg mt-2">
-            7.5 GB de 10 GB usados
+            {usageFormatted} MB de {limitFormatted} usados
           </p>
         </div>
       </div>

@@ -35,6 +35,21 @@ export async function createFile(data: {
   revalidatePath("/drive")
 }
 
+export async function getUserStorageUsage() {
+  const session = await auth()
+  if (!session?.user?.email) return 0
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { files: { select: { sizeBytes: true } } }
+  })
+
+  if (!user) return 0
+
+  const totalBytes = user.files.reduce((acc, file) => acc + BigInt(file.sizeBytes), BigInt(0))
+  return Number(totalBytes)
+}
+
 export async function createFolder(name: string, parentId?: string | null) {
   const session = await auth()
   if (!session?.user?.email) throw new Error("Unauthorized")

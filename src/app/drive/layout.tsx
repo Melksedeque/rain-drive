@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/drive/sidebar"
 import { Topbar } from "@/components/drive/topbar"
 import { auth } from "@/lib/auth"
+import { getUserStorageUsage } from "@/actions/storage"
 import { redirect } from "next/navigation"
 
 export default async function DriveLayout({
@@ -14,9 +15,11 @@ export default async function DriveLayout({
     redirect("/auth/login")
   }
 
+  const usageBytes = await getUserStorageUsage()
+
   return (
     <div className="flex h-screen bg-bg text-fg overflow-hidden">
-      <Sidebar />
+      <Sidebar usageBytes={usageBytes} />
       
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         <Topbar userEmail={session.user.email} />
