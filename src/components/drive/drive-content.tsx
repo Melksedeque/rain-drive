@@ -102,7 +102,7 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
 
   return (
     <div 
-      className="space-y-6 min-h-[50vh] relative"
+      className="space-y-6 h-full min-h-[calc(100vh-8rem)] relative flex flex-col"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
