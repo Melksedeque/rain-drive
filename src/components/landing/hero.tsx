@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Cloud, CloudRain, Sun, Lock } from "lucide-react";
+import { ArrowRight, Cloud, CloudRain, Sun, Lock, X, Minus, Maximize2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -104,9 +104,15 @@ function WeatherWidgetDemo() {
       
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-danger/20 border border-danger/50" />
-          <div className="w-3 h-3 rounded-full bg-warning/20 border border-warning/50" />
-          <div className="w-3 h-3 rounded-full bg-success/20 border border-success/50" />
+          <div className="flex justify-center items-center w-4 h-4 rounded-full bg-red-600/50 border border-red-600/70">
+            <X className="w-2.5 h-2.5 text-red-800" />
+          </div>
+          <div className="flex justify-center items-center w-4 h-4 rounded-full bg-yellow-600/50 border border-yellow-600/70">
+            <Minus className="w-2.5 h-2.5 text-yellow-800" />
+          </div>
+          <div className="flex justify-center items-center w-4 h-4 rounded-full bg-green-600/50 border border-green-600/70">
+            <Maximize2 className="w-2.5 h-2.5 text-green-800" />
+          </div>
         </div>
         <div className="text-xs font-mono text-muted-fg">status: {state.toUpperCase()}</div>
       </div>
