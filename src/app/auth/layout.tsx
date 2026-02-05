@@ -1,5 +1,4 @@
-import { Cloud } from "lucide-react"
-import Link from "next/link"
+import { Logo } from "@/components/ui/logo"
 
 export default function AuthLayout({
   children,
@@ -11,12 +10,7 @@ export default function AuthLayout({
       {/* Left Side - Form */}
       <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16 relative">
         <div className="absolute top-8 left-8 sm:left-12 lg:left-16">
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="bg-accent/10 p-1.5 rounded-lg text-accent">
-              <Cloud className="w-5 h-5" />
-            </div>
-            <span>RainDrive</span>
-          </Link>
+          <Logo className="text-lg" />
         </div>
         
         <div className="w-full max-w-sm mx-auto">

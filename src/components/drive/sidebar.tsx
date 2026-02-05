@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Cloud, Clock, Trash2, HardDrive } from "lucide-react"
+import { Clock, Trash2, HardDrive } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Logo } from "@/components/ui/logo"
 
 const sidebarItems = [
   { icon: HardDrive, label: "Meu Drive", href: "/drive" },
@@ -21,12 +22,7 @@ export function Sidebar({ usageBytes = 0 }: { usageBytes?: number }) {
   return (
     <aside className="w-64 border-r border-border bg-card/30 flex-col h-full hidden md:flex">
       <div className="h-16 flex items-center px-6 border-b border-border/50">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <div className="bg-accent/10 p-1.5 rounded-lg text-accent">
-            <Cloud className="w-5 h-5" />
-          </div>
-          <span>RainDrive</span>
-        </Link>
+        <Logo className="text-lg" />
       </div>
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
