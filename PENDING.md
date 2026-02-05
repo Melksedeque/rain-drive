@@ -1,17 +1,13 @@
-# Tarefas Pendentes e Melhorias Futuras
+# Itens Pendentes
 
-Este arquivo lista itens identificados durante a revisão de código que requerem atenção futura, refatoração ou implementação de melhorias.
+## Funcionalidades
+- [ ] **Testes Unitários:** O projeto não possui infraestrutura de testes (Jest/Vitest). Configurar e cobrir as novas funcionalidades (Recentes/Lixeira) com 80% de coverage.
+- [ ] **Internacionalização (i18n):** Implementar suporte a múltiplos idiomas (atualmente hardcoded em PT-BR).
+- [ ] **Webhook Vercel Blob:** Implementar webhook para garantir consistência entre uploads no Blob e registros no DB.
+- [ ] **Storage Key:** Extrair chave correta do Blob URL para deleção mais robusta.
+- [ ] **Limpeza Automática da Lixeira:** Configurar Cron Job (Vercel Cron) para limpar itens da lixeira com mais de 30 dias.
+- [ ] **Analytics:** Adicionar rastreamento de uso para as páginas de Recentes e Lixeira.
 
-## Backend & API
-
-- [ ] **Cache de Clima Persistente**: O cache atual em `src/lib/weather.ts` é em memória. Para produção serverless, migrar para Redis ou Vercel KV.
-- [ ] **Webhook de Upload**: Implementar o handler `onUploadCompleted` em `src/app/api/upload/route.ts` para garantir consistência entre o armazenamento (Vercel Blob) e o banco de dados, independente do sucesso do cliente.
-- [ ] **Storage Key**: Em `src/actions/storage.ts` (`createFile`), extrair a chave correta do blob em vez de usar a URL completa como `storageKey`.
-
-## Lógica de Negócio
-
-- [ ] **Movimentação de Pastas**: A verificação de dependência circular em `src/actions/storage.ts` (`moveItem`) precisa ser robusta e recursiva para evitar que uma pasta pai seja movida para dentro de um filho.
-
-## Frontend
-
-- [ ] **Tipagem Estrita**: Revisar componentes que ainda possam ter tipagens genéricas implícitas e garantir cobertura total de interfaces.
+## Melhorias Técnicas
+- [ ] **Refatoração de ItemActions:** Consolidar lógica de delete em um único lugar (atualmente dividido entre `item-actions.tsx` e `trash-content.tsx`).
+- [ ] **Paginação:** Implementar paginação real ou infinite scroll para listas muito grandes (atualmente limitadas a 50 em Recentes).
