@@ -1,17 +1,17 @@
 "use client"
 
-import { useEffect, useState, type ElementType } from "react"
+import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
-import { X, FileText, Calendar, HardDrive, Tag, Trash2, Clock } from "lucide-react"
-import { File } from "@prisma/client"
+import { X, FileText, Calendar, HardDrive, Tag, Clock, Trash2, LucideIcon } from "lucide-react"
+import { File, Folder } from "@prisma/client"
 import { formatBytes } from "@/lib/utils"
 
 interface DetailsDialogProps {
   onClose: () => void
-  file: File
+  item: File | Folder
 }
 
-const DetailRow = ({ icon: Icon, label, value, className }: { icon: any, label: string, value: string, className?: string }) => (
+const DetailRow = ({ icon: Icon, label, value, className }: { icon: LucideIcon, label: string, value: string, className?: string }) => (
   <div className={`flex items-start gap-3 py-3 border-b border-border last:border-0 ${className}`}>
     <div className="p-2 bg-muted rounded-lg shrink-0">
       <Icon className="w-4 h-4 text-muted-fg" />
@@ -23,11 +23,10 @@ const DetailRow = ({ icon: Icon, label, value, className }: { icon: any, label: 
   </div>
 )
 
-export function DetailsDialog({ onClose, file }: DetailsDialogProps) {
+export function DetailsDialog({ onClose, item }: DetailsDialogProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
     return () => setMounted(false)
   }, [])
@@ -52,6 +51,10 @@ export function DetailsDialog({ onClose, file }: DetailsDialogProps) {
     }).format(new Date(date))
   }
 
+  const isFile = (item: File | Folder): item is File => {
+    return 'mimeType' in item
+  }
+
   return createPortal(
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
       <div 
@@ -63,7 +66,7 @@ export function DetailsDialog({ onClose, file }: DetailsDialogProps) {
         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
           <h3 className="font-medium text-lg flex items-center gap-2">
             <FileText className="w-5 h-5 text-accent" />
-            Detalhes do Arquivo
+            Detalhes do {isFile(item) ? 'Arquivo' : 'Item'}
           </h3>
           <button onClick={onClose} className="text-muted-fg hover:text-fg cursor-pointer p-1 hover:bg-accent/10 rounded-md transition-colors">
             <X className="w-5 h-5" />
@@ -75,34 +78,38 @@ export function DetailsDialog({ onClose, file }: DetailsDialogProps) {
             <DetailRow 
               icon={FileText} 
               label="Nome" 
-              value={file.name} 
+              value={item.name} 
             />
-            <DetailRow 
-              icon={Tag} 
-              label="Tipo" 
-              value={file.mimeType} 
-            />
-            <DetailRow 
-              icon={HardDrive} 
-              label="Tamanho" 
-              value={formatBytes(file.sizeBytes)} 
-            />
+            {isFile(item) && (
+              <>
+                <DetailRow 
+                  icon={Tag} 
+                  label="Tipo" 
+                  value={item.mimeType} 
+                />
+                <DetailRow 
+                  icon={HardDrive} 
+                  label="Tamanho" 
+                  value={formatBytes(item.sizeBytes)} 
+                />
+              </>
+            )}
             <DetailRow 
               icon={Calendar} 
               label="Criado em" 
-              value={formatDate(file.createdAt)} 
+              value={formatDate(item.createdAt)} 
             />
             <DetailRow 
               icon={Clock} 
               label="Modificado em" 
-              value={formatDate(file.updatedAt)} 
+              value={formatDate(item.updatedAt)} 
             />
             
-            {file.inTrash && file.deletedAt && (
+            {('inTrash' in item ? item.inTrash : false) && ('deletedAt' in item ? item.deletedAt : null) && (
               <DetailRow 
                 icon={Trash2} 
                 label="Excluído em" 
-                value={formatDate(file.deletedAt)}
+                value={formatDate(item.deletedAt as Date)}
                 className="bg-red-50 dark:bg-red-900/10 -mx-4 px-4 border-red-100 dark:border-red-900/20"
               />
             )}

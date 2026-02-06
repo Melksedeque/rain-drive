@@ -11,15 +11,15 @@ import { DropdownMenu } from "./dropdown-menu"
 import { RenameDialog } from "./rename-dialog"
 import { PreviewModal } from "./preview-modal"
 import { DetailsDialog } from "./details-dialog"
-import { copyItem, moveItem } from "@/actions/storage"
-import { deleteFile, deleteFolder } from "@/actions/delete"
+import { copyItem } from "@/actions/storage"
+import { deleteFile } from "@/actions/delete"
 import { toast } from "sonner"
 import { File } from "@prisma/client"
 
 interface FileActionsMenuProps {
   file: File
-  children?: React.ReactNode // For Context Menu wrapper
-  asDropdown?: boolean // If true, renders only the dropdown trigger
+  children?: React.ReactNode
+  asDropdown?: boolean
 }
 
 export function FileActionsMenu({ file, children, asDropdown = false }: FileActionsMenuProps) {
@@ -90,7 +90,7 @@ export function FileActionsMenu({ file, children, asDropdown = false }: FileActi
   const handleMove = () => {
     console.log("Context Menu: Move clicked")
     toast.info("Funcionalidade de mover em breve")
-    // TODO: Implement Move Dialog
+    // TODO: Criar o modal de Mover arquivo
   }
 
   const handleDetails = () => {
@@ -185,7 +185,7 @@ export function FileActionsMenu({ file, children, asDropdown = false }: FileActi
       {isDetailsOpen && (
         <DetailsDialog 
             onClose={() => setIsDetailsOpen(false)} 
-            file={file} 
+            item={file} 
         />
       )}
     </>
@@ -219,7 +219,6 @@ export function FileActionsMenu({ file, children, asDropdown = false }: FileActi
   )
 }
 
-// Internal wrapper for Context Menu handling
 function FileContextMenuTrigger({ 
     children, 
     menuItems
@@ -231,7 +230,7 @@ function FileContextMenuTrigger({
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault()
-        e.stopPropagation() // Prevent parent folder context menu
+        e.stopPropagation()
         open(e.clientX, e.clientY, menuItems)
     }
 

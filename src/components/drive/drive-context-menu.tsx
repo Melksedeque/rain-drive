@@ -98,7 +98,6 @@ export function DriveContextMenu({ children, currentFolderId }: DriveContextMenu
         type="file" 
         ref={folderInputRef} 
         className="hidden" 
-        // @ts-expect-error - webkitdirectory is standard in modern browsers but TS might complain
         webkitdirectory=""
         directory=""
         multiple

@@ -95,19 +95,7 @@ export function TrashActionsMenu({ item, itemType, children }: TrashActionsMenuP
       {isDetailsOpen && (
         <DetailsDialog 
             onClose={() => setIsDetailsOpen(false)} 
-            // We cast because DetailsDialog expects File, but we might have Folder
-            // Ideally DetailsDialog should accept both or we have a wrapper
-            // For now, assuming DetailsDialog handles basic props or we only show file details correctly
-            // Checking DetailsDialog implementation... it uses File type.
-            // If we pass a folder, it might miss fields or TS error.
-            // Let's check DetailsDialog content again if needed.
-            // For MVP, we pass it as any or cast, assuming similar structure for common fields.
-            // Actually, Folder doesn't have sizeBytes, mimeType etc.
-            // We should only show Details for Files or update DetailsDialog.
-            // For now let's conditionally render Details only for Files or if DetailsDialog supports it.
-            // Since requirements say "Detalhes - para visualizar informações do arquivo/pasta", we should support both.
-            // But let's start with File casting safe check.
-            file={item as unknown as File} 
+            item={item} 
         />
       )}
     </>
