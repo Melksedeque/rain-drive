@@ -86,11 +86,15 @@ export function TrashActionsMenu({ item, itemType, children }: TrashActionsMenuP
     open(e.clientX, e.clientY, MenuItems)
   }
 
+  if (!React.isValidElement(children)) {
+    return <>{children}</>
+  }
+
   return (
     <>
-      <div onContextMenu={handleContextMenu} className="w-full">
-        {children}
-      </div>
+      {React.cloneElement(children, {
+        onContextMenu: handleContextMenu
+      } as React.HTMLAttributes<HTMLElement>)}
       
       {isDetailsOpen && (
         <DetailsDialog 
