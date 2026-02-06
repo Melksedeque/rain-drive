@@ -53,6 +53,11 @@ Bem-vindo ao RainDrive.
 - Busca rápida
 - Ordenação (nome, data, tamanho)
 - Grid / List view
+- Context Menu Avançado (Novo)
+  - Controle de estado global
+  - Fechamento automático inteligente
+  - Transições suaves
+  - Suporte completo a Lixeira (Restaurar, Excluir)
 
 ### Weather Gate™ ☔
 - O sistema verifica o clima no local do usuário
@@ -92,6 +97,7 @@ Bem-vindo ao RainDrive.
   - O fluxo do usuário é sempre claro e funcional
 - Micro-animações com Framer Motion
 - Ícones com **Lucide Icons**
+- Cursor Pointer Universal em elementos interativos
 
 ---
 
