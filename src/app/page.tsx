@@ -5,6 +5,7 @@ import { About } from "@/components/landing/about";
 import { Testimonials } from "@/components/landing/testimonials";
 import { Contact } from "@/components/landing/contact";
 import { Footer } from "@/components/landing/footer";
+import { Pricing } from "@/components/landing/pricing";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Hero />
       <Features />
       <About />
+      <Pricing />
       <Testimonials />
       <Contact />
       <Footer />
