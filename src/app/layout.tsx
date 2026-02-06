@@ -19,11 +19,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "RainDrive",
-  description: "Cloud storage that only works when it rains.",
-  icons: {
-    icon: "/icon",
-    apple: "/apple-icon",
-  },
+  description: "O seu drive na núvem que só permite download quando chove.",
 };
 
 export default function RootLayout({

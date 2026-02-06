@@ -10,9 +10,10 @@ import { toast } from "sonner"
 interface CreateFolderDialogProps {
   isOpen: boolean
   onClose: () => void
+  parentId?: string | null
 }
 
-export function CreateFolderDialog({ isOpen, onClose }: CreateFolderDialogProps) {
+export function CreateFolderDialog({ isOpen, onClose, parentId: propParentId }: CreateFolderDialogProps) {
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -37,10 +38,10 @@ export function CreateFolderDialog({ isOpen, onClose }: CreateFolderDialogProps)
 
     setIsLoading(true)
     
-    // Extract folderId
-    const parentId = pathname.startsWith('/drive/') && pathname.length > 7 
-      ? pathname.split('/drive/')[1] 
-      : null
+    // Use prop parentId if provided, otherwise fallback to pathname extraction
+    const parentId = propParentId !== undefined 
+      ? propParentId 
+      : (pathname.startsWith('/drive/') && pathname.length > 7 ? pathname.split('/drive/')[1] : null)
 
     try {
       await createFolder(name, parentId)

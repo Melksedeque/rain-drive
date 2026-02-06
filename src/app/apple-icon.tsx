@@ -1,24 +1,20 @@
 import { ImageResponse } from "next/og";
 
-// Route segment config
 export const runtime = "edge";
 
-// Image metadata
 export const size = {
   width: 180,
   height: 180,
 };
 export const contentType = "image/png";
 
-// Image generation
 export default function Icon() {
   return new ImageResponse(
     (
-      // ImageResponse JSX element
       <div
         style={{
           fontSize: 128,
-          background: "#0284c7", // sky-600 (accent)
+          background: "#0ea5e9", // sky-500
           width: "100%",
           height: "100%",
           display: "flex",
@@ -46,7 +42,6 @@ export default function Icon() {
         </svg>
       </div>
     ),
-    // ImageResponse options
     {
       ...size,
     }

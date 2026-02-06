@@ -3,22 +3,25 @@
 import { useState, useRef } from "react"
 import { ContextMenuItem, ContextMenuSeparator } from "./context-menu"
 import { useContextMenu } from "@/components/providers/context-menu-provider"
-import { FolderPlus, FileUp, FolderUp } from "lucide-react"
+import { FolderPlus, FileUp, FolderUp, Info } from "lucide-react"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { CreateFolderDialog } from "./create-folder-dialog"
+import { DetailsDialog } from "./details-dialog"
+import { Folder } from "@prisma/client"
 
 interface DriveContextMenuProps {
   children: React.ReactNode
-  currentFolderId?: string | null
+  currentFolder?: Folder | null
 }
 
-export function DriveContextMenu({ children, currentFolderId }: DriveContextMenuProps) {
+export function DriveContextMenu({ children, currentFolder }: DriveContextMenuProps) {
   const { open } = useContextMenu()
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
 
-  const { uploadFile } = useFileUpload({ folderId: currentFolderId })
+  const { uploadFile } = useFileUpload({ folderId: currentFolder?.id })
 
   const handleNewFolder = () => {
     setIsFolderDialogOpen(true)
@@ -30,6 +33,10 @@ export function DriveContextMenu({ children, currentFolderId }: DriveContextMenu
 
   const handleUploadFolder = () => {
     folderInputRef.current?.click()
+  }
+
+  const handleDetails = () => {
+    setIsDetailsOpen(true)
   }
 
   const MenuItems = (
@@ -47,13 +54,20 @@ export function DriveContextMenu({ children, currentFolderId }: DriveContextMenu
         <FolderUp className="mr-2 h-4 w-4" />
         Upload de pasta
       </ContextMenuItem>
+      
+      {currentFolder && (
+        <>
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={handleDetails}>
+            <Info className="mr-2 h-4 w-4" />
+            Detalhes
+          </ContextMenuItem>
+        </>
+      )}
     </>
   )
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    // Only trigger if clicking on the background (not bubbling from a file item)
-    // We can check if the target is an element with specific data-attribute or just rely on 
-    // stopPropagation in the file items.
     e.preventDefault()
     open(e.clientX, e.clientY, MenuItems)
   }
@@ -65,15 +79,9 @@ export function DriveContextMenu({ children, currentFolderId }: DriveContextMenu
   }
 
   const onFolderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Handle folder upload (multiple files)
       if (e.target.files && e.target.files.length > 0) {
-          // Upload logic for folders is more complex (preserving structure).
-          // For now, we can just upload all files flat or warn user.
-          // Or recursively create folders. 
-          // Given the current 'uploadFile' hook handles single file, we might need to loop.
           Array.from(e.target.files).forEach(file => {
-              // TODO: Implement proper folder structure preservation
-              // For now, just uploading the files to the current folder
+              // TODO: Implementar estrutura de pastas apropriada
               uploadFile(file)
           })
       }
@@ -86,7 +94,15 @@ export function DriveContextMenu({ children, currentFolderId }: DriveContextMenu
       <CreateFolderDialog 
         isOpen={isFolderDialogOpen} 
         onClose={() => setIsFolderDialogOpen(false)} 
+        parentId={currentFolder?.id}
       />
+
+      {currentFolder && isDetailsOpen && (
+        <DetailsDialog 
+          onClose={() => setIsDetailsOpen(false)} 
+          item={currentFolder} 
+        />
+      )}
 
       <input 
         type="file" 

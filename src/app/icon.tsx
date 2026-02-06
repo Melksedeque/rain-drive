@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const runtime = "edge";
+
 export function generateImageMetadata() {
   return [
     {
@@ -36,7 +38,7 @@ export default function Icon({ id }: { id: string }) {
       <div
         style={{
           fontSize: size,
-          background: "#0284c7",
+          background: "#0ea5e9", // sky-500
           width: "100%",
           height: "100%",
           display: "flex",

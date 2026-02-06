@@ -9,7 +9,7 @@ import { useFileUpload } from "@/hooks/use-file-upload"
 import { cn } from "@/lib/utils"
 import { moveItem } from "@/actions/storage"
 import { FileRow } from "@/components/drive/file-row"
-import { ItemActions } from "./item-actions"
+import { FolderActionsMenu } from "./folder-actions-menu"
 import { useWeather } from "@/components/providers/weather-provider"
 import { toast } from "sonner"
 
@@ -27,20 +27,20 @@ interface DriveContentProps {
   files: File[]
   breadcrumbs?: { label: string; href: string }[]
   currentFolderId?: string | null
+  currentFolder?: Folder | null
 }
 
-export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId }: DriveContentProps) {
+export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId, currentFolder }: DriveContentProps) {
   const router = useRouter()
   const [isDragging, setIsDragging] = useState(false)
   const [draggedItem, setDraggedItem] = useState<{ id: string; type: "file" | "folder" } | null>(null)
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null)
-  const { uploadFile } = useFileUpload({ folderId: currentFolderId })
+  const { uploadFile } = useFileUpload({ folderId: currentFolderId || currentFolder?.id })
   const { status: weatherStatus } = useWeather()
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    // Only set global dragging if NOT dragging an internal item
     if (!draggedItem) {
         setIsDragging(true)
     }
@@ -65,12 +65,10 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
     }
   }, [uploadFile])
 
-  // Internal DnD handlers
   const handleItemDragStart = (e: React.DragEvent, id: string, type: "file" | "folder") => {
     e.stopPropagation()
     setDraggedItem({ id, type })
     e.dataTransfer.effectAllowed = "move"
-    // Set transparent image or custom drag image if needed
   }
 
   const handleFolderDragOver = (e: React.DragEvent, folderId: string) => {
@@ -94,12 +92,11 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
     setDragOverFolderId(null)
 
     if (draggedItem) {
-        if (draggedItem.id === targetFolderId) return // Cannot move to itself
+        if (draggedItem.id === targetFolderId) return
 
         try {
             await moveItem(draggedItem.id, draggedItem.type, targetFolderId)
             toast.success("Item movido")
-            // Optimistic update could happen here, but router.refresh() handles it via server action
         } catch (error) {
             console.error("Failed to move item", error)
             toast.error("Erro ao mover item")
@@ -151,27 +148,28 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {folders.map((folder) => (
-              <div 
-                key={folder.id} 
-                onClick={() => router.push(`/drive/${folder.id}`)}
-                draggable
-                onDragStart={(e) => handleItemDragStart(e, folder.id, "folder")}
-                onDragOver={(e) => handleFolderDragOver(e, folder.id)}
-                onDragLeave={handleFolderDragLeave}
-                onDrop={(e) => handleFolderDrop(e, folder.id)}
-                className={cn(
-                    "transition-all duration-200 rounded-xl cursor-pointer",
-                    dragOverFolderId === folder.id && "ring-2 ring-accent scale-105 bg-accent/5",
-                    draggedItem?.id === folder.id && "opacity-50"
-                )}
-              >
-                <FolderCard 
-                  name={folder.name} 
-                  itemCount={(folder._count?.files || 0) + (folder._count?.children || 0)}
-                  status={weatherStatus}
-                  menu={<ItemActions id={folder.id} type="folder" />}
-                />
-              </div>
+              <FolderActionsMenu key={folder.id} folder={folder}>
+                <div 
+                  onClick={() => router.push(`/drive/${folder.id}`)}
+                  draggable
+                  onDragStart={(e) => handleItemDragStart(e, folder.id, "folder")}
+                  onDragOver={(e) => handleFolderDragOver(e, folder.id)}
+                  onDragLeave={handleFolderDragLeave}
+                  onDrop={(e) => handleFolderDrop(e, folder.id)}
+                  className={cn(
+                      "transition-all duration-200 rounded-xl cursor-pointer",
+                      dragOverFolderId === folder.id && "ring-2 ring-accent scale-105 bg-accent/5",
+                      draggedItem?.id === folder.id && "opacity-50"
+                  )}
+                >
+                  <FolderCard 
+                    name={folder.name} 
+                    itemCount={(folder._count?.files || 0) + (folder._count?.children || 0)}
+                    status={weatherStatus}
+                    menu={<FolderActionsMenu folder={folder} asDropdown />}
+                  />
+                </div>
+              </FolderActionsMenu>
             ))}
           </div>
         )}
