@@ -89,10 +89,6 @@ export async function POST(request: Request): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob }) => {
-        // TODO: Implementar webhook para robustez (ver PENDING.md)
-        // console.log('Blob uploaded', blob.url);
-        
-        // Return payload for webhook
         return {
           userId: session.user.id,
           folderId: folderId,
