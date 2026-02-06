@@ -23,10 +23,15 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         // Parse clientPayload
         let fileSize = 0;
+        let folderId: string | null = null;
+        let filename: string | null = null;
+        
         if (clientPayload) {
             try {
                 const payload = JSON.parse(clientPayload);
                 fileSize = payload.size || 0;
+                folderId = payload.folderId || null;
+                filename = payload.filename || null;
             } catch (e) {
                 console.error("Error parsing clientPayload", e);
             }
@@ -84,10 +89,15 @@ export async function POST(request: Request): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob }) => {
-        // Webhook handler - útil para consistência em produção
-        // Mas lidaremos com a criação no DB no lado do cliente (sucesso) para feedback imediato na UI
         // TODO: Implementar webhook para robustez (ver PENDING.md)
-        console.log('Blob uploaded', blob.url);
+        // console.log('Blob uploaded', blob.url);
+        
+        // Return payload for webhook
+        return {
+          userId: session.user.id,
+          folderId: folderId,
+          filename: filename
+        };
       },
     });
 
