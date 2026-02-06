@@ -35,6 +35,84 @@ export async function createFile(data: {
   revalidatePath("/drive")
 }
 
+export async function copyItem(itemId: string, itemType: "file" | "folder", targetFolderId?: string | null) {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  if (itemType === "file") {
+    const file = await prisma.file.findUnique({
+      where: { id: itemId, userId: user.id }
+    })
+    
+    if (!file) throw new Error("Arquivo não encontrado")
+
+    // Copy file record. Vercel Blob URL is reused (it's public).
+    // In a real scenario, we might want to copy the blob too, but reusing URL saves space/bandwidth.
+    // Appending " - Cópia" to name.
+    await prisma.file.create({
+      data: {
+        name: `${file.name.replace(/(\.[\w\d_-]+)$/i, ' - Cópia$1')}`, // Insert before extension
+        sizeBytes: file.sizeBytes,
+        storageUrl: file.storageUrl,
+        storageKey: file.storageKey,
+        mimeType: file.mimeType,
+        folderId: targetFolderId !== undefined ? targetFolderId : file.folderId,
+        userId: user.id,
+      },
+    })
+  } else {
+    // Copying folders is complex (recursive). For MVP, we'll just throw or implement shallow copy.
+    // Let's allow shallow copy of folder structure (empty folder).
+    const folder = await prisma.folder.findUnique({
+      where: { id: itemId, userId: user.id }
+    })
+    
+    if (!folder) throw new Error("Pasta não encontrada")
+
+    await prisma.folder.create({
+      data: {
+        name: `${folder.name} - Cópia`,
+        parentId: targetFolderId !== undefined ? targetFolderId : folder.parentId,
+        userId: user.id,
+      }
+    })
+  }
+
+  revalidatePath("/drive")
+}
+
+export async function renameItem(itemId: string, itemType: "file" | "folder", newName: string) {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  })
+
+  if (!user) throw new Error("User not found")
+
+  if (itemType === "file") {
+    await prisma.file.update({
+      where: { id: itemId, userId: user.id },
+      data: { name: newName }
+    })
+  } else {
+    await prisma.folder.update({
+      where: { id: itemId, userId: user.id },
+      data: { name: newName }
+    })
+  }
+
+  revalidatePath("/drive")
+}
+
+
 export async function deleteItem(itemId: string, itemType: "file" | "folder") {
   const session = await auth()
   if (!session?.user?.email) throw new Error("Unauthorized")
