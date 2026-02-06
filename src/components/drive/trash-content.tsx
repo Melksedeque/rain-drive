@@ -13,12 +13,22 @@ interface TrashContentProps {
   folders: Folder[]
 }
 
+import { TrashActionsMenu } from "./trash-actions-menu"
+
 export function TrashContent({ files, folders }: TrashContentProps) {
   const router = useRouter()
   const [isEmptying, setIsEmptying] = useState(false)
-  const [processingId, setProcessingId] = useState<string | null>(null)
+  // ... existing state ...
 
-  const isEmpty = files.length === 0 && folders.length === 0
+  // Keep existing handlers if they are still needed for the inline buttons, 
+  // or remove them if we fully replace with context menu.
+  // The requirement is to ADD context menu, not necessarily replace inline buttons.
+  // But usually context menu is hidden until right click.
+  // The user asked to "Criar componente de menu de contexto... Adicionar as opções...".
+  // Let's wrap the rows in TrashActionsMenu.
+
+  // ...
+
 
   const handleRestore = async (id: string, type: "file" | "folder") => {
     setProcessingId(id)
@@ -110,80 +120,84 @@ export function TrashContent({ files, folders }: TrashContentProps) {
               </thead>
               <tbody className="divide-y divide-border">
                 {folders.map((folder) => (
-                  <tr key={folder.id} className="group hover:bg-accent/5 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
-                           <FolderIcon className="w-4 h-4" />
+                  <TrashActionsMenu key={folder.id} item={folder} itemType="folder">
+                    <tr className="group hover:bg-accent/5 transition-colors cursor-pointer">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
+                             <FolderIcon className="w-4 h-4" />
+                          </div>
+                          <span className="font-medium text-fg">{folder.name}</span>
                         </div>
-                        <span className="font-medium text-fg">{folder.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg text-xs">Pasta</td>
-                    <td className="px-4 py-3 text-muted-fg font-mono text-xs">-</td>
-                    <td className="px-4 py-3 text-muted-fg text-xs">
-                        {folder.deletedAt ? new Date(folder.deletedAt).toLocaleDateString() : '-'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                            <button 
-                                onClick={() => handleRestore(folder.id, "folder")}
-                                disabled={processingId === folder.id}
-                                className="p-2 hover:bg-green-500/10 text-muted-fg hover:text-green-500 rounded-full transition-colors"
-                                title="Restaurar"
-                            >
-                                {processingId === folder.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-                            </button>
-                            <button 
-                                onClick={() => handleDelete(folder.id, "folder")}
-                                disabled={processingId === folder.id}
-                                className="p-2 hover:bg-red-500/10 text-muted-fg hover:text-red-500 rounded-full transition-colors"
-                                title="Excluir Permanentemente"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg text-xs">Pasta</td>
+                      <td className="px-4 py-3 text-muted-fg font-mono text-xs">-</td>
+                      <td className="px-4 py-3 text-muted-fg text-xs">
+                          {folder.deletedAt ? new Date(folder.deletedAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                              <button 
+                                  onClick={() => handleRestore(folder.id, "folder")}
+                                  disabled={processingId === folder.id}
+                                  className="p-2 hover:bg-green-500/10 text-muted-fg hover:text-green-500 rounded-full transition-colors cursor-pointer"
+                                  title="Restaurar"
+                              >
+                                  {processingId === folder.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                              </button>
+                              <button 
+                                  onClick={() => handleDelete(folder.id, "folder")}
+                                  disabled={processingId === folder.id}
+                                  className="p-2 hover:bg-red-500/10 text-muted-fg hover:text-red-500 rounded-full transition-colors cursor-pointer"
+                                  title="Excluir Permanentemente"
+                              >
+                                  <Trash2 className="w-4 h-4" />
+                              </button>
+                          </div>
+                      </td>
+                    </tr>
+                  </TrashActionsMenu>
                 ))}
                 {files.map((file) => (
-                  <tr key={file.id} className="group hover:bg-accent/5 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
-                           <FileIcon className="w-4 h-4" />
+                  <TrashActionsMenu key={file.id} item={file} itemType="file">
+                    <tr className="group hover:bg-accent/5 transition-colors cursor-pointer">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
+                             <FileIcon className="w-4 h-4" />
+                          </div>
+                          <span className="font-medium text-fg">{file.name}</span>
                         </div>
-                        <span className="font-medium text-fg">{file.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg text-xs">Arquivo</td>
-                    <td className="px-4 py-3 text-muted-fg font-mono text-xs">
-                        {(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg text-xs">
-                        {file.deletedAt ? new Date(file.deletedAt).toLocaleDateString() : '-'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                            <button 
-                                onClick={() => handleRestore(file.id, "file")}
-                                disabled={processingId === file.id}
-                                className="p-2 hover:bg-green-500/10 text-muted-fg hover:text-green-500 rounded-full transition-colors"
-                                title="Restaurar"
-                            >
-                                {processingId === file.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-                            </button>
-                            <button 
-                                onClick={() => handleDelete(file.id, "file")}
-                                disabled={processingId === file.id}
-                                className="p-2 hover:bg-red-500/10 text-muted-fg hover:text-red-500 rounded-full transition-colors"
-                                title="Excluir Permanentemente"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg text-xs">Arquivo</td>
+                      <td className="px-4 py-3 text-muted-fg font-mono text-xs">
+                          {(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB
+                      </td>
+                      <td className="px-4 py-3 text-muted-fg text-xs">
+                          {file.deletedAt ? new Date(file.deletedAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                              <button 
+                                  onClick={() => handleRestore(file.id, "file")}
+                                  disabled={processingId === file.id}
+                                  className="p-2 hover:bg-green-500/10 text-muted-fg hover:text-green-500 rounded-full transition-colors cursor-pointer"
+                                  title="Restaurar"
+                              >
+                                  {processingId === file.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                              </button>
+                              <button 
+                                  onClick={() => handleDelete(file.id, "file")}
+                                  disabled={processingId === file.id}
+                                  className="p-2 hover:bg-red-500/10 text-muted-fg hover:text-red-500 rounded-full transition-colors cursor-pointer"
+                                  title="Excluir Permanentemente"
+                              >
+                                  <Trash2 className="w-4 h-4" />
+                              </button>
+                          </div>
+                      </td>
+                    </tr>
+                  </TrashActionsMenu>
                 ))}
               </tbody>
             </table>

@@ -8,6 +8,7 @@ import { useState, useCallback } from "react"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { cn } from "@/lib/utils"
 import { moveItem } from "@/actions/storage"
+import { FileRow } from "@/components/drive/file-row"
 import { ItemActions } from "./item-actions"
 import { useWeather } from "@/components/providers/weather-provider"
 import { toast } from "sonner"
@@ -193,39 +194,13 @@ export function DriveContent({ folders, files, breadcrumbs = [], currentFolderId
               </thead>
               <tbody className="divide-y divide-border">
                 {files.map((file) => (
-                  <tr 
+                  <FileRow 
                     key={file.id} 
-                    className={cn(
-                        "group hover:bg-accent/5 transition-colors cursor-move",
-                        draggedItem?.id === file.id && "opacity-50 bg-accent/10"
-                    )}
+                    file={file}
                     draggable
                     onDragStart={(e) => handleItemDragStart(e, file.id, "file")}
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-accent/10 text-accent rounded">
-                            <FileIcon className="w-4 h-4" />
-                        </div>
-                        <a 
-                           href={`/api/download?fileId=${file.id}`}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           className="font-medium text-fg group-hover:text-accent transition-colors hover:underline"
-                           onClick={(e) => e.stopPropagation()}
-                         >
-                           {file.name}
-                         </a>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-fg">{(Number(file.sizeBytes) / 1024 / 1024).toFixed(2)} MB</td>
-                    <td className="px-4 py-3 text-muted-fg">{new Date(file.updatedAt).toLocaleDateString()}</td>
-                    <td className="px-4 py-3">
-                        <button className="text-muted-fg hover:text-fg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                            <MoreHorizontal className="w-4 h-4" />
-                        </button>
-                    </td>
-                  </tr>
+                    className={cn(draggedItem?.id === file.id && "opacity-50")}
+                  />
                 ))}
               </tbody>
             </table>
