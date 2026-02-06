@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Cloud, CloudRain, Sun, Lock, X, Minus, Maximize2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 export function Hero() {
@@ -82,6 +83,8 @@ export function Hero() {
 
 function WeatherWidgetDemo() {
   const [state, setState] = useState<"cloudy" | "dry" | "raining">("cloudy");
+  const { resolvedTheme } = useTheme();
+  const darktheme = resolvedTheme === "noir";
 
   useEffect(() => {
     const states: ("cloudy" | "dry" | "raining")[] = ["cloudy", "dry", "raining"];
@@ -105,13 +108,13 @@ function WeatherWidgetDemo() {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
           <div className="flex justify-center items-center w-4 h-4 rounded-full bg-red-600/50 border border-red-600/70">
-            <X className="w-2.5 h-2.5 text-red-800" />
+            <X className={cn("w-2.5 h-2.5", darktheme ? "text-red-400" : "text-red-800")} />
           </div>
           <div className="flex justify-center items-center w-4 h-4 rounded-full bg-yellow-600/50 border border-yellow-600/70">
-            <Minus className="w-2.5 h-2.5 text-yellow-800" />
+            <Minus className={cn("w-2.5 h-2.5", darktheme ? "text-yellow-400" : "text-yellow-800")} />
           </div>
           <div className="flex justify-center items-center w-4 h-4 rounded-full bg-green-600/50 border border-green-600/70">
-            <Maximize2 className="w-2.5 h-2.5 text-green-800" />
+            <Maximize2 className={cn("w-2.5 h-2.5", darktheme ? "text-green-400" : "text-green-800")} />
           </div>
         </div>
         <div className="text-xs font-mono text-muted-fg">status: {state.toUpperCase()}</div>
