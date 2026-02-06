@@ -1,6 +1,6 @@
 "use client"
 
-import { FileIcon, Folder as FolderIcon, Trash2, RotateCcw, Loader2 } from "lucide-react"
+import { FileIcon, Folder as FolderIcon, Trash2, RotateCcw, Loader2, AlertTriangle } from "lucide-react"
 import { File, Folder } from "@prisma/client"
 import { useState } from "react"
 import { restoreItem, permanentDeleteItem, emptyTrash } from "@/actions/storage"
@@ -71,7 +71,7 @@ export function TrashContent({ files, folders }: TrashContentProps) {
             Lixeira
           </h1>
           <p className="text-muted-fg text-sm mt-1">
-            Itens são excluídos permanentemente após 30 dias
+            Gerencie seus itens excluídos
           </p>
         </div>
         {!isEmpty && (
@@ -85,6 +85,19 @@ export function TrashContent({ files, folders }: TrashContentProps) {
             </button>
         )}
       </header>
+
+      {!isEmpty && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-medium text-amber-600 dark:text-amber-500">Atenção</h4>
+            <p className="text-sm text-amber-600/90 dark:text-amber-500/90">
+              Itens na lixeira há mais de 30 dias serão excluídos permanentemente de forma automática. 
+              Certifique-se de restaurar arquivos importantes antes desse prazo.
+            </p>
+          </div>
+        </div>
+      )}
 
       <section className="flex-1 overflow-auto">
         {isEmpty ? (
