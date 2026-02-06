@@ -29,7 +29,11 @@ export function useFileUpload({ folderId, onSuccess, onError }: UseFileUploadOpt
       const newBlob = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
-        clientPayload: JSON.stringify({ size: file.size }),
+        clientPayload: JSON.stringify({ 
+          size: file.size,
+          filename: file.name,
+          folderId: folderId
+        }),
       })
 
       await createFile({
