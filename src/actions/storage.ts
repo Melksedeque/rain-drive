@@ -51,10 +51,6 @@ export async function copyItem(itemId: string, itemType: "file" | "folder", targ
     })
     
     if (!file) throw new Error("Arquivo não encontrado")
-
-    // Copy file record. Vercel Blob URL is reused (it's public).
-    // In a real scenario, we might want to copy the blob too, but reusing URL saves space/bandwidth.
-    // Appending " - Cópia" to name.
     await prisma.file.create({
       data: {
         name: `${file.name.replace(/(\.[\w\d_-]+)$/i, ' - Cópia$1')}`, // Insert before extension
@@ -67,8 +63,6 @@ export async function copyItem(itemId: string, itemType: "file" | "folder", targ
       },
     })
   } else {
-    // Copying folders is complex (recursive). For MVP, we'll just throw or implement shallow copy.
-    // Let's allow shallow copy of folder structure (empty folder).
     const folder = await prisma.folder.findUnique({
       where: { id: itemId, userId: user.id }
     })
@@ -178,15 +172,10 @@ export async function permanentDeleteItem(itemId: string, itemType: "file" | "fo
   // Por enquanto, deletamos apenas do banco e o Blob fica órfão (precisa de limpeza periódica ou deletar aqui)
   
   if (itemType === "file") {
-     // Tentativa de deletar do Blob seria ideal aqui se tivéssemos a URL
-     // const file = await prisma.file.findUnique({ where: { id: itemId }})
-     // if (file) await del(file.storageUrl) 
-
     await prisma.file.delete({
       where: { id: itemId, userId: user.id }
     })
   } else {
-    // Cascade cuida dos filhos
     await prisma.folder.delete({
       where: { id: itemId, userId: user.id }
     })
@@ -205,12 +194,10 @@ export async function emptyTrash() {
 
   if (!user) throw new Error("User not found")
 
-  // Deletar arquivos na lixeira
   await prisma.file.deleteMany({
     where: { userId: user.id, inTrash: true }
   })
 
-  // Deletar pastas na lixeira
   await prisma.folder.deleteMany({
     where: { userId: user.id, inTrash: true }
   })
@@ -308,9 +295,6 @@ export async function moveItem(itemId: string, itemType: "file" | "folder", targ
 
   if (!user) throw new Error("User not found")
 
-  // Verificação básica de propriedade é implícita pela cláusula where com userId
-  // Mas vamos verificar explicitamente para garantir
-  
   if (itemType === "file") {
     const file = await prisma.file.findFirst({ where: { id: itemId, userId: user.id }})
     if (!file) throw new Error("Arquivo não encontrado")
@@ -323,11 +307,8 @@ export async function moveItem(itemId: string, itemType: "file" | "folder", targ
     const folder = await prisma.folder.findFirst({ where: { id: itemId, userId: user.id }})
     if (!folder) throw new Error("Pasta não encontrada")
 
-    // Prevenir mover pasta para dentro dela mesma ou de seus filhos (Dependência Circular)
-    // Isso requer uma verificação recursiva. Para o MVP, checamos apenas se o destino é o próprio item.
     if (targetFolderId === itemId) throw new Error("Não é possível mover uma pasta para dentro dela mesma")
     
-    // Verificação circular adequada:
     if (targetFolderId) {
        let currentId: string | null = targetFolderId
        while (currentId) {
