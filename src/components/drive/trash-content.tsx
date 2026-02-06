@@ -1,12 +1,10 @@
 "use client"
 
-import { FileIcon, Folder as FolderIcon, Trash2, RotateCcw, AlertTriangle, Loader2 } from "lucide-react"
+import { FileIcon, Folder as FolderIcon, Trash2, RotateCcw, Loader2 } from "lucide-react"
 import { File, Folder } from "@prisma/client"
-import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { restoreItem, permanentDeleteItem, emptyTrash } from "@/actions/storage"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
 
 interface TrashContentProps {
   files: File[]
@@ -16,19 +14,10 @@ interface TrashContentProps {
 import { TrashActionsMenu } from "./trash-actions-menu"
 
 export function TrashContent({ files, folders }: TrashContentProps) {
-  const router = useRouter()
   const [isEmptying, setIsEmptying] = useState(false)
-  // ... existing state ...
+  const [processingId, setProcessingId] = useState<string | null>(null)
 
-  // Keep existing handlers if they are still needed for the inline buttons, 
-  // or remove them if we fully replace with context menu.
-  // The requirement is to ADD context menu, not necessarily replace inline buttons.
-  // But usually context menu is hidden until right click.
-  // The user asked to "Criar componente de menu de contexto... Adicionar as opções...".
-  // Let's wrap the rows in TrashActionsMenu.
-
-  // ...
-
+  const isEmpty = files.length === 0 && folders.length === 0
 
   const handleRestore = async (id: string, type: "file" | "folder") => {
     setProcessingId(id)
