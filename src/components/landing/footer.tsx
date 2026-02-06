@@ -65,8 +65,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-fg">
+        <div className="mt-12 pt-8 border-t border-border flex items-center justify-between gap-4 text-xs text-muted-fg">
           <p>&copy; {new Date().getFullYear()} RainDrive Inc. Todos os direitos reservados (quando não chove).</p>
+          <p>Desenvolvido por <Link href="https://github.com/melksedeque" target="_blank" className="text-fg hover:underline">Melksedeque Silva</Link></p>
         </div>
       </div>
     </footer>
