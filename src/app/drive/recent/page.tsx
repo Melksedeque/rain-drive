@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RecentPage() {
-  const recentFiles = await getRecentFiles(50) // Limite de 50 itens
+  const recentFiles = await getRecentFiles(20) // Começar com 20 itens
 
   return <RecentContent files={recentFiles} />
 }

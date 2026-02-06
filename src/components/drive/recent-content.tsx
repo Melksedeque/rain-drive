@@ -1,8 +1,10 @@
 "use client"
 
-import { FileIcon, Clock } from "lucide-react"
+import { FileIcon, Clock, Loader2, ChevronDown } from "lucide-react"
 import { File } from "@prisma/client"
 import { FileActionsMenu } from "./file-actions-menu"
+import { useState } from "react"
+import { getRecentFiles } from "@/actions/storage"
 
 interface RecentFile extends File {
   folder: { name: string } | null
@@ -12,7 +14,34 @@ interface RecentContentProps {
   files: RecentFile[]
 }
 
-export function RecentContent({ files }: RecentContentProps) {
+const ITEMS_PER_PAGE = 20
+
+export function RecentContent({ files: initialFiles }: RecentContentProps) {
+  const [files, setFiles] = useState<RecentFile[]>(initialFiles)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(initialFiles.length >= ITEMS_PER_PAGE)
+  const [offset, setOffset] = useState(initialFiles.length)
+
+  const loadMore = async () => {
+    if (loading) return
+
+    setLoading(true)
+    try {
+      const newFiles = await getRecentFiles(ITEMS_PER_PAGE, offset) as RecentFile[]
+      
+      if (newFiles.length < ITEMS_PER_PAGE) {
+        setHasMore(false)
+      }
+      
+      setFiles(prev => [...prev, ...newFiles])
+      setOffset(prev => prev + newFiles.length)
+    } catch (error) {
+      console.error("Failed to load more files", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-6 h-full flex flex-col">
       <header className="flex items-center justify-between pb-4 border-b border-border">
@@ -92,6 +121,28 @@ export function RecentContent({ files }: RecentContentProps) {
           </div>
         )}
       </section>
+      
+      {hasMore && files.length > 0 && (
+        <div className="flex justify-center p-4 border-t border-border">
+            <button 
+                onClick={loadMore} 
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 hover:bg-accent/10 text-muted-fg hover:text-fg rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            >
+                {loading ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Carregando...
+                    </>
+                ) : (
+                    <>
+                        <ChevronDown className="mr-2 h-4 w-4" />
+                        Carregar mais
+                    </>
+                )}
+            </button>
+        </div>
+      )}
     </div>
   )
 }
