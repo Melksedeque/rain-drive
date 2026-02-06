@@ -205,7 +205,7 @@ export async function emptyTrash() {
   revalidatePath("/drive/trash")
 }
 
-export async function getRecentFiles(limit: number = 20) {
+export async function getRecentFiles(limit: number = 20, offset: number = 0) {
   const session = await auth()
   if (!session?.user?.email) return []
 
@@ -222,6 +222,7 @@ export async function getRecentFiles(limit: number = 20) {
     },
     orderBy: { updatedAt: 'desc' },
     take: limit,
+    skip: offset,
     include: { folder: { select: { name: true } } }
   })
 }
