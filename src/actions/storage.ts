@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
+import { del } from "@vercel/blob"
 
 export async function createFile(data: {
   name: string
@@ -168,14 +169,26 @@ export async function permanentDeleteItem(itemId: string, itemType: "file" | "fo
 
   if (!user) throw new Error("User not found")
 
-  // TODO: Se for arquivo, deletar do Vercel Blob também (ver PENDING.md)
-  // Por enquanto, deletamos apenas do banco e o Blob fica órfão (precisa de limpeza periódica ou deletar aqui)
-  
   if (itemType === "file") {
+    const file = await prisma.file.findUnique({
+      where: { id: itemId, userId: user.id },
+      select: { storageUrl: true }
+    })
+
+    if (file?.storageUrl) {
+      try {
+        await del(file.storageUrl)
+      } catch (error) {
+        console.error("Erro ao deletar blob:", error)
+      }
+    }
+
     await prisma.file.delete({
       where: { id: itemId, userId: user.id }
     })
   } else {
+    // Para pastas, precisamos deletar recursivamente os blobs de todos os arquivos dentro
+    // TODO: Implementar deleção recursiva de blobs para pastas (similar ao cron job)
     await prisma.folder.delete({
       where: { id: itemId, userId: user.id }
     })
