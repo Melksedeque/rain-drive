@@ -144,7 +144,6 @@ export function FolderActionsMenu({ folder, children, asDropdown = false }: Fold
         type="file" 
         ref={folderInputRef} 
         className="hidden" 
-        // @ts-expect-error directory attributes
         webkitdirectory=""
         directory=""
         multiple

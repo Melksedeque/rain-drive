@@ -25,7 +25,6 @@ export function CreateFolderDialog({ isOpen, onClose, parentId: propParentId }: 
     return () => setMounted(false)
   }, [])
 
-  // Reset form when opening
   useEffect(() => {
     if (isOpen) {
       setName("")
@@ -38,7 +37,6 @@ export function CreateFolderDialog({ isOpen, onClose, parentId: propParentId }: 
 
     setIsLoading(true)
     
-    // Use prop parentId if provided, otherwise fallback to pathname extraction
     const parentId = propParentId !== undefined 
       ? propParentId 
       : (pathname.startsWith('/drive/') && pathname.length > 7 ? pathname.split('/drive/')[1] : null)
@@ -60,7 +58,7 @@ export function CreateFolderDialog({ isOpen, onClose, parentId: propParentId }: 
   if (!mounted || !isOpen) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
@@ -68,7 +66,7 @@ export function CreateFolderDialog({ isOpen, onClose, parentId: propParentId }: 
       />
       
       {/* Modal */}
-      <div className="relative bg-card w-full max-w-sm rounded-xl border border-border shadow-2xl animate-in fade-in zoom-in duration-200 z-[101]">
+      <div className="relative bg-card w-full max-w-sm rounded-xl border border-border shadow-2xl animate-in fade-in zoom-in duration-200 z-101">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-medium text-lg">Nova Pasta</h3>
           <button onClick={onClose} className="text-muted-fg hover:text-fg cursor-pointer p-1 hover:bg-accent/10 rounded-md transition-colors">
