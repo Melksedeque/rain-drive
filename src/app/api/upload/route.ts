@@ -84,16 +84,15 @@ export async function POST(request: Request): Promise<NextResponse> {
             'application/gzip'
           ],
           tokenPayload: JSON.stringify({
-            email: session.user.email,
+            userId: session.user.id,
+            folderId: folderId,
+            filename: filename
           }),
         };
       },
-      onUploadCompleted: async ({ blob }) => {
-        return {
-          userId: session.user.id,
-          folderId: folderId,
-          filename: filename
-        };
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        console.log('Blob uploaded:', blob.url);
+        // O webhook cuidará do registro no banco se necessário
       },
     });
 

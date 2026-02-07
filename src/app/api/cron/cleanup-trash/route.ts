@@ -2,12 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { del } from '@vercel/blob';
 
-// Configuração do Vercel Cron
-// A rota deve ser GET
-export const runtime = 'edge'; // Opcional, mas bom para crons rápidos. Mas Prisma no Edge pode precisar de setup específico (Accelerate). 
-// Se não usar Prisma Accelerate, melhor usar runtime padrão (nodejs).
-// Vou remover runtime edge para garantir compatibilidade com Prisma direto no DB.
-
 async function deleteFolderRecursively(folderId: string) {
   // 1. Encontrar subpastas
   const subfolders = await prisma.folder.findMany({
