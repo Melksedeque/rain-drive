@@ -38,6 +38,13 @@ export function Footer() {
                 Recursos
               </Link>
               <Link 
+                href="#planos" 
+                onClick={(e) => handleScroll(e, "#planos")}
+                className="text-sm text-muted-fg hover:text-fg transition-colors cursor-pointer"
+              >
+                Planos
+              </Link>
+              <Link 
                 href="#depoimentos" 
                 onClick={(e) => handleScroll(e, "#depoimentos")}
                 className="text-sm text-muted-fg hover:text-fg transition-colors cursor-pointer"

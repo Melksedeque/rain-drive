@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const navItems = [
   { label: "Recursos", href: "#recursos" },
+  { label: "Planos", href: "#planos" },
   { label: "Sobre", href: "#sobre" },
   { label: "Depoimentos", href: "#depoimentos" },
   { label: "Contato", href: "#contato" },
